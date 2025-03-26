@@ -11,7 +11,7 @@ import { NewProjectModal } from "@/components/modals/new-project-modal"
 
 export function Dashboard() {
   const [showNewProjectModal, setShowNewProjectModal] = useState(false)
-  // Données fictives pour la démo
+  
   const recentProjects = [
     { id: 1, title: "ALBUM_CONCEPT", status: "IN_PROGRESS", tags: ["ELECTRONIC", "AMBIENT"], lastUpdated: "2H_AGO" },
     { id: 2, title: "EP_COLLAB", status: "PENDING", tags: ["JAZZ", "FUSION"], lastUpdated: "1D_AGO" },
@@ -54,11 +54,13 @@ export function Dashboard() {
         </Button>
       </div>
 
-      {/* Lecteur audio */}
-      <AudioPlayer />
+      {/* Lecteur audio - Utilise maintenant une couleur de carte plus claire */}
+      <div className="bg-card border border-border rounded-lg p-4">
+        <AudioPlayer />
+      </div>
 
       {/* Projets récents */}
-      <div>
+      <div className="bg-card border border-border rounded-lg p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-foreground">RECENT_PROJECTS</h2>
           <div className="flex items-center gap-2">
@@ -79,7 +81,7 @@ export function Dashboard() {
       </div>
 
       {/* Compositions récentes */}
-      <div>
+      <div className="bg-card border border-border rounded-lg p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-foreground">RECENT_COMPOSITIONS</h2>
           <div className="flex items-center gap-2">
@@ -92,7 +94,7 @@ export function Dashboard() {
             </Button>
           </div>
         </div>
-        <div className="bg-card border border-border rounded-lg overflow-hidden">
+        <div className="space-y-2">
           {recentCompositions.map((composition) => (
             <CompositionItem key={composition.id} composition={composition} />
           ))}
@@ -100,7 +102,7 @@ export function Dashboard() {
       </div>
 
       {/* Annotations récentes */}
-      <div>
+      <div className="bg-card border border-border rounded-lg p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-foreground">RECENT_ANNOTATIONS</h2>
           <div className="flex items-center gap-2">
@@ -113,12 +115,13 @@ export function Dashboard() {
             </Button>
           </div>
         </div>
-        <div className="bg-card border border-border rounded-lg overflow-hidden">
+        <div className="space-y-2">
           {recentAnnotations.map((annotation) => (
             <AnnotationItem key={annotation.id} annotation={annotation} />
           ))}
         </div>
       </div>
+      
       {showNewProjectModal && <NewProjectModal onClose={() => setShowNewProjectModal(false)} />}
     </div>
   )
