@@ -40,15 +40,6 @@
     --ring: 240 5% 20%;
     --radius: 0.25rem;
   }
-
-  .dark {
-    /* Version sombre optionnelle */
-    --background: 240 10% 15%;
-    --foreground: 240 10% 90%;
-    --card: 240 10% 20%;
-    --card-foreground: 240 10% 90%;
-    /* ... (le reste du thème sombre) */
-  }
 }
 @layer base {
   * {
