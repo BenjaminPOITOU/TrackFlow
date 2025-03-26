@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 0 0% 100%;
+    --radius: 0.25rem;
+  }
+
+  .dark {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 100%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01" on, "ss02" on, "cv01" on, "cv02" on, "cv03" on;
+  }
+
+  @font-face {
+    font-family: "Audiowide";
+    src: url("/fonts/Audiowide-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  .font-tech {
+    font-family: "Audiowide", var(--font-inter), sans-serif;
+  }
+}
+
+@layer utilities {
+  .glow-text {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7), 0 0 10px rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.05em;
+  }
+
+  .glow-text-sm {
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.5), 0 0 7px rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.03em;
+  }
+
+  .glow-card {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  /* Tags de projet - Couleurs spécifiques pour chaque tag */
+  .tag-electronic {
+    background-color: rgba(0, 163, 255, 0.1);
+    border-color: rgba(0, 163, 255, 0.5);
+    color: #00a3ff;
+  }
+
+  .tag-ambient {
+    background-color: rgba(0, 255, 213, 0.1);
+    border-color: rgba(0, 255, 213, 0.5);
+    color: #00ffd5;
+  }
+
+  .tag-jazz {
+    background-color: rgba(255, 184, 0, 0.1);
+    border-color: rgba(255, 184, 0, 0.5);
+    color: #ffb800;
+  }
+
+  .tag-fusion {
+    background-color: rgba(255, 128, 0, 0.1);
+    border-color: rgba(255, 128, 0, 0.5);
+    color: #ff8000;
+  }
+
+  .tag-pop {
+    background-color: rgba(255, 0, 128, 0.1);
+    border-color: rgba(255, 0, 128, 0.5);
+    color: #ff0080;
+  }
+
+  .tag-vocal {
+    background-color: rgba(255, 0, 255, 0.1);
+    border-color: rgba(255, 0, 255, 0.5);
+    color: #ff00ff;
+  }
+
+  .tag-house {
+    background-color: rgba(128, 0, 255, 0.1);
+    border-color: rgba(128, 0, 255, 0.5);
+    color: #8000ff;
+  }
+
+  .tag-techno {
+    background-color: rgba(0, 128, 255, 0.1);
+    border-color: rgba(0, 128, 255, 0.5);
+    color: #0080ff;
+  }
+
+  .tag-default {
+    background-color: rgba(150, 150, 150, 0.1);
+    border-color: rgba(150, 150, 150, 0.5);
+    color: #969696;
+  }
+
+  /* Branches de composition - Couleurs spécifiques pour chaque branche */
+  .branch-main {
+    background-color: rgba(0, 255, 133, 0.1);
+    border-color: rgba(0, 255, 133, 0.5);
+    color: #00ff85;
+  }
+
+  .branch-dev {
+    background-color: rgba(0, 163, 255, 0.1);
+    border-color: rgba(0, 163, 255, 0.5);
+    color: #00a3ff;
+  }
+
+  .branch-feature {
+    background-color: rgba(170, 0, 255, 0.1);
+    border-color: rgba(170, 0, 255, 0.5);
+    color: #aa00ff;
+  }
+
+  .branch-hotfix {
+    background-color: rgba(255, 0, 0, 0.1);
+    border-color: rgba(255, 0, 0, 0.5);
+    color: #ff0000;
+  }
+
+  .branch-release {
+    background-color: rgba(0, 255, 0, 0.1);
+    border-color: rgba(0, 255, 0, 0.5);
+    color: #00ff00;
+  }
+
+  .branch-default {
+    background-color: rgba(150, 150, 150, 0.1);
+    border-color: rgba(150, 150, 150, 0.5);
+    color: #969696;
+  }
+
+  .glow-button {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .glow-button:hover {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 255, 255, 0.5);
+  }
+}
+
