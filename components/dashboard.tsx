@@ -43,11 +43,11 @@ export function Dashboard() {
       {/* En-tête */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight glow-text">DASHBOARD_SYS</h1>
-          <p className="text-[#EFEFEF]">WELCOME_TO_CREATIVE_SPACE</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">DASHBOARD_SYS</h1>
+          <p className="text-muted-foreground">WELCOME_TO_CREATIVE_SPACE</p>
         </div>
         <Button
-          className="bg-transparent border border-[#FFFFFF] hover:bg-[#1e1e1e] text-[#FFFFFF]"
+          className="bg-transparent border border-border hover:bg-secondary text-foreground"
           onClick={() => setShowNewProjectModal(true)}
         >
           <Plus className="mr-2 h-4 w-4" /> NEW_PROJECT
@@ -60,10 +60,13 @@ export function Dashboard() {
       {/* Projets récents */}
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold glow-text">RECENT_PROJECTS</h2>
+          <h2 className="text-xl font-semibold text-foreground">RECENT_PROJECTS</h2>
           <div className="flex items-center gap-2">
-            <div className="text-xs text-[#EFEFEF]">{Math.floor(Math.random() * 9000) + 1000}</div>
-            <Button variant="outline" className="text-xs border-[#FFFFFF] bg-transparent hover:bg-[#1e1e1e]">
+            <div className="text-xs text-muted-foreground">{Math.floor(Math.random() * 9000) + 1000}</div>
+            <Button 
+              variant="outline" 
+              className="text-xs border-border bg-transparent hover:bg-secondary text-foreground"
+            >
               VIEW_ALL
             </Button>
           </div>
@@ -78,15 +81,18 @@ export function Dashboard() {
       {/* Compositions récentes */}
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold glow-text">RECENT_COMPOSITIONS</h2>
+          <h2 className="text-xl font-semibold text-foreground">RECENT_COMPOSITIONS</h2>
           <div className="flex items-center gap-2">
-            <div className="text-xs text-[#EFEFEF]">{Math.floor(Math.random() * 9000) + 1000}</div>
-            <Button variant="outline" className="text-xs border-[#FFFFFF] bg-transparent hover:bg-[#1e1e1e]">
+            <div className="text-xs text-muted-foreground">{Math.floor(Math.random() * 9000) + 1000}</div>
+            <Button 
+              variant="outline" 
+              className="text-xs border-border bg-transparent hover:bg-secondary text-foreground"
+            >
               VIEW_ALL
             </Button>
           </div>
         </div>
-        <div className="bg-black border border-[#333333] rounded-lg overflow-hidden">
+        <div className="bg-card border border-border rounded-lg overflow-hidden">
           {recentCompositions.map((composition) => (
             <CompositionItem key={composition.id} composition={composition} />
           ))}
@@ -96,15 +102,18 @@ export function Dashboard() {
       {/* Annotations récentes */}
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold glow-text">RECENT_ANNOTATIONS</h2>
+          <h2 className="text-xl font-semibold text-foreground">RECENT_ANNOTATIONS</h2>
           <div className="flex items-center gap-2">
-            <div className="text-xs text-[#EFEFEF]">{Math.floor(Math.random() * 9000) + 1000}</div>
-            <Button variant="outline" className="text-xs border-[#FFFFFF] bg-transparent hover:bg-[#1e1e1e]">
+            <div className="text-xs text-muted-foreground">{Math.floor(Math.random() * 9000) + 1000}</div>
+            <Button 
+              variant="outline" 
+              className="text-xs border-border bg-transparent hover:bg-secondary text-foreground"
+            >
               VIEW_ALL
             </Button>
           </div>
         </div>
-        <div className="bg-black border border-[#333333] rounded-lg overflow-hidden">
+        <div className="bg-card border border-border rounded-lg overflow-hidden">
           {recentAnnotations.map((annotation) => (
             <AnnotationItem key={annotation.id} annotation={annotation} />
           ))}
@@ -114,4 +123,3 @@ export function Dashboard() {
     </div>
   )
 }
-
