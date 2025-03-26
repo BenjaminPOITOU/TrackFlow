@@ -1,5 +1,42 @@
+"use client"
+
+import { AudioPlayer } from "@/components/audio-player"
+import { ProjectCard } from "@/components/project-card"
+import { CompositionItem } from "@/components/composition-item"
+import { AnnotationItem } from "@/components/annotation-item"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
+import { useState } from "react"
+import { NewProjectModal } from "@/components/modals/new-project-modal"
+
 export function Dashboard() {
-  // ... (votre code existant)
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false)
+  
+  const recentProjects = [
+    { id: 1, title: "ALBUM_CONCEPT", status: "IN_PROGRESS", tags: ["ELECTRONIC", "AMBIENT"], lastUpdated: "2H_AGO" },
+    { id: 2, title: "EP_COLLAB", status: "PENDING", tags: ["JAZZ", "FUSION"], lastUpdated: "1D_AGO" },
+    { id: 3, title: "SINGLE_RELEASE", status: "COMPLETED", tags: ["POP", "VOCAL"], lastUpdated: "3D_AGO" },
+    { id: 4, title: "REMIX_PACK", status: "IN_PROGRESS", tags: ["HOUSE", "TECHNO"], lastUpdated: "5D_AGO" },
+  ]
+
+  const recentCompositions = [
+    { id: 1, title: "INTRO_MASTER", branch: "main", duration: "3:42", date: "24/03/2025" },
+    { id: 2, title: "VERSE_EXP", branch: "dev", duration: "2:18", date: "23/03/2025" },
+    { id: 3, title: "BRIDGE_SECTION", branch: "feature/vocals", duration: "1:56", date: "22/03/2025" },
+  ]
+
+  const recentAnnotations = [
+    {
+      id: 1,
+      type: "FEEDBACK",
+      timeMarker: "1:24",
+      author: "COLLAB_1",
+      content: "INCREASE_BASS_LEVEL",
+      status: "PENDING",
+    },
+    { id: 2, type: "IDEA", timeMarker: "2:36", author: "YOU", content: "ADD_ATMOSPHERIC_SYNTH", status: "IN_PROGRESS" },
+    { id: 3, type: "FIX", timeMarker: "0:58", author: "COLLAB_2", content: "FIX_DRUM_TIMING", status: "RESOLVED" },
+  ]
 
   return (
     <div className="space-y-8 bg-background">
