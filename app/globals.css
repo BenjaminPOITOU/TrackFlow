@@ -4,46 +4,88 @@
 
 @layer base {
   :root {
-    --background: 240 10% 98%;
-    /* Très léger gris-blanc */
-    --foreground: 240 10% 10%;
-    /* Gris très sombre plutôt que noir pur */
-    --card: 240 10% 97%;
-    /* Blanc cassé légèrement grisé */
-    --card-foreground: 240 10% 15%;
-    /* Noir adouci */
-    --popover: 240 10% 96%;
-    /* Blanc cassé encore plus doux */
-    --popover-foreground: 240 10% 15%;
-    /* Noir adouci */
-    --primary: 240 10% 95%;
+    --background: 240 10% 92%;
     /* Gris très clair */
-    --primary-foreground: 240 10% 20%;
-    /* Noir très doux */
-    --secondary: 240 4.8% 90%;
-    /* Gris très clair */
-    --secondary-foreground: 240 5.9% 20%;
-    /* Gris très sombre */
-    --muted: 240 4.8% 92%;
-    /* Gris encore plus clair */
-    --muted-foreground: 240 3.8% 50%;
-    /* Gris médian */
-    --accent: 240 4.8% 93%;
-    /* Gris très très clair */
-    --accent-foreground: 240 5.9% 15%;
+    --foreground: 240 10% 25%;
+    /* Gris sombre adouci */
+    --card: 240 10% 90%;
+    /* Gris clair */
+    --card-foreground: 240 10% 30%;
     /* Gris presque noir */
-    --destructive: 0 84.2% 50%;
-    /* Rouge moins agressif */
-    --destructive-foreground: 0 0% 95%;
-    /* Blanc cassé */
-    --border: 240 5.9% 85%;
+    --popover: 240 10% 88%;
     /* Gris très clair */
-    --input: 240 5.9% 85%;
+    --popover-foreground: 240 10% 30%;
+    /* Gris presque noir */
+    --primary: 240 10% 85%;
+    /* Gris clair */
+    --primary-foreground: 240 10% 35%;
+    /* Gris sombre */
+    --secondary: 240 4.8% 82%;
+    /* Gris clair */
+    --secondary-foreground: 240 5.9% 35%;
+    /* Gris sombre */
+    --muted: 240 4.8% 84%;
+    /* Gris clair */
+    --muted-foreground: 240 3.8% 40%;
+    /* Gris médian */
+    --accent: 240 4.8% 86%;
     /* Gris très clair */
-    --ring: 240 10% 96%;
-    /* Blanc très doux */
+    --accent-foreground: 240 5.9% 30%;
+    /* Gris presque noir */
+    --destructive: 0 84.2% 40%;
+    /* Rouge très doux */
+    --destructive-foreground: 0 0% 90%;
+    /* Gris très clair */
+    --border: 240 5.9% 75%;
+    /* Gris clair */
+    --input: 240 5.9% 75%;
+    /* Gris clair */
+    --ring: 240 10% 88%;
+    /* Gris très clair */
     --radius: 0.25rem;
   }
+
+  .dark {
+    --background: 240 5% 20%;
+    /* Gris sombre */
+    --foreground: 240 5% 85%;
+    /* Gris très clair */
+    --card: 240 5% 15%;
+    /* Gris très sombre */
+    --card-foreground: 240 5% 85%;
+    /* Gris très clair */
+    --popover: 240 5% 15%;
+    /* Gris très sombre */
+    --popover-foreground: 240 5% 85%;
+    /* Gris très clair */
+    --primary: 240 5% 25%;
+    /* Gris sombre */
+    --primary-foreground: 240 5% 85%;
+    /* Gris très clair */
+    --secondary: 240 5% 30%;
+    /* Gris moyen */
+    --secondary-foreground: 240 5% 85%;
+    /* Gris très clair */
+    --muted: 240 5% 30%;
+    /* Gris moyen */
+    --muted-foreground: 240 5% 70%;
+    /* Gris clair */
+    --accent: 240 5% 30%;
+    /* Gris moyen */
+    --accent-foreground: 240 5% 85%;
+    /* Gris très clair */
+    --destructive: 0 62.8% 30%;
+    /* Rouge très doux */
+    --destructive-foreground: 0 0% 85%;
+    /* Gris très clair */
+    --border: 240 5% 35%;
+    /* Gris moyen */
+    --input: 240 5% 35%;
+    /* Gris moyen */
+    --ring: 240 5% 85%;
+    /* Gris très clair */
+  }
+}
 
   .dark {
     --background: 240 5% 15%;
