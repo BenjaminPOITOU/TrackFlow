@@ -4,89 +4,88 @@
 
 @layer base {
   :root {
-    --background: 240 10% 92%;
-    /* Gris très clair */
-    --foreground: 240 10% 25%;
-    /* Gris sombre adouci */
-    --card: 240 10% 90%;
-    /* Gris clair */
-    --card-foreground: 240 10% 30%;
-    /* Gris presque noir */
-    --popover: 240 10% 88%;
-    /* Gris très clair */
-    --popover-foreground: 240 10% 30%;
-    /* Gris presque noir */
-    --primary: 240 10% 85%;
-    /* Gris clair */
-    --primary-foreground: 240 10% 35%;
-    /* Gris sombre */
-    --secondary: 240 4.8% 82%;
-    /* Gris clair */
-    --secondary-foreground: 240 5.9% 35%;
-    /* Gris sombre */
-    --muted: 240 4.8% 84%;
-    /* Gris clair */
-    --muted-foreground: 240 3.8% 40%;
-    /* Gris médian */
-    --accent: 240 4.8% 86%;
-    /* Gris très clair */
-    --accent-foreground: 240 5.9% 30%;
-    /* Gris presque noir */
-    --destructive: 0 84.2% 40%;
-    /* Rouge très doux */
-    --destructive-foreground: 0 0% 90%;
-    /* Gris très clair */
+    --background: 240 10% 25%;
+    /* Gris sombre adouci (ancien --foreground) */
+    --foreground: 240 10% 92%;
+    /* Gris très clair (ancien --background) */
+    --card: 240 10% 30%;
+    /* Gris presque noir (ancien --card-foreground) */
+    --card-foreground: 240 10% 90%;
+    /* Gris clair (ancien --card) */
+    --popover: 240 10% 30%;
+    /* Gris presque noir (ancien --popover-foreground) */
+    --popover-foreground: 240 10% 88%;
+    /* Gris très clair (ancien --popover) */
+    --primary: 240 10% 35%;
+    /* Gris sombre (ancien --primary-foreground) */
+    --primary-foreground: 240 10% 85%;
+    /* Gris clair (ancien --primary) */
+    --secondary: 240 5.9% 35%;
+    /* Gris sombre (ancien --secondary-foreground) */
+    --secondary-foreground: 240 4.8% 82%;
+    /* Gris clair (ancien --secondary) */
+    --muted: 240 3.8% 40%;
+    /* Gris médian (ancien --muted-foreground) */
+    --muted-foreground: 240 4.8% 84%;
+    /* Gris clair (ancien --muted) */
+    --accent: 240 5.9% 30%;
+    /* Gris presque noir (ancien --accent-foreground) */
+    --accent-foreground: 240 4.8% 86%;
+    /* Gris très clair (ancien --accent) */
+    --destructive: 0 0% 90%;
+    /* Gris très clair (ancien --destructive-foreground) */
+    --destructive-foreground: 0 84.2% 40%;
+    /* Rouge très doux (ancien --destructive) */
     --border: 240 5.9% 75%;
-    /* Gris clair */
+    /* Gris clair (inchangé) */
     --input: 240 5.9% 75%;
-    /* Gris clair */
+    /* Gris clair (inchangé) */
     --ring: 240 10% 88%;
-    /* Gris très clair */
+    /* Gris très clair (inchangé) */
     --radius: 0.25rem;
   }
 
   .dark {
-    --background: 240 5% 20%;
-    /* Gris sombre */
-    --foreground: 240 5% 85%;
-    /* Gris très clair */
-    --card: 240 5% 15%;
-    /* Gris très sombre */
-    --card-foreground: 240 5% 85%;
-    /* Gris très clair */
-    --popover: 240 5% 15%;
-    /* Gris très sombre */
-    --popover-foreground: 240 5% 85%;
-    /* Gris très clair */
-    --primary: 240 5% 25%;
-    /* Gris sombre */
-    --primary-foreground: 240 5% 85%;
-    /* Gris très clair */
-    --secondary: 240 5% 30%;
-    /* Gris moyen */
-    --secondary-foreground: 240 5% 85%;
-    /* Gris très clair */
-    --muted: 240 5% 30%;
-    /* Gris moyen */
-    --muted-foreground: 240 5% 70%;
-    /* Gris clair */
-    --accent: 240 5% 30%;
-    /* Gris moyen */
-    --accent-foreground: 240 5% 85%;
-    /* Gris très clair */
-    --destructive: 0 62.8% 30%;
-    /* Rouge très doux */
-    --destructive-foreground: 0 0% 85%;
-    /* Gris très clair */
+    --background: 240 5% 85%;
+    /* Gris très clair (ancien --foreground) */
+    --foreground: 240 5% 20%;
+    /* Gris sombre (ancien --background) */
+    --card: 240 5% 85%;
+    /* Gris très clair (ancien --card-foreground) */
+    --card-foreground: 240 5% 15%;
+    /* Gris très sombre (ancien --card) */
+    --popover: 240 5% 85%;
+    /* Gris très clair (ancien --popover-foreground) */
+    --popover-foreground: 240 5% 15%;
+    /* Gris très sombre (ancien --popover) */
+    --primary: 240 5% 85%;
+    /* Gris très clair (ancien --primary-foreground) */
+    --primary-foreground: 240 5% 25%;
+    /* Gris sombre (ancien --primary) */
+    --secondary: 240 5% 85%;
+    /* Gris très clair (ancien --secondary-foreground) */
+    --secondary-foreground: 240 5% 30%;
+    /* Gris moyen (ancien --secondary) */
+    --muted: 240 5% 70%;
+    /* Gris clair (ancien --muted-foreground) */
+    --muted-foreground: 240 5% 30%;
+    /* Gris moyen (ancien --muted) */
+    --accent: 240 5% 85%;
+    /* Gris très clair (ancien --accent-foreground) */
+    --accent-foreground: 240 5% 30%;
+    /* Gris moyen (ancien --accent) */
+    --destructive: 0 0% 85%;
+    /* Gris très clair (ancien --destructive-foreground) */
+    --destructive-foreground: 0 62.8% 30%;
+    /* Rouge très doux (ancien --destructive) */
     --border: 240 5% 35%;
-    /* Gris moyen */
+    /* Gris moyen (inchangé) */
     --input: 240 5% 35%;
-    /* Gris moyen */
+    /* Gris moyen (inchangé) */
     --ring: 240 5% 85%;
-    /* Gris très clair */
+    /* Gris très clair (inchangé) */
   }
 }
-
 @layer base {
   * {
     @apply border-border;
