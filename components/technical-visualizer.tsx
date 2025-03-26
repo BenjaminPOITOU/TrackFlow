@@ -74,7 +74,7 @@ export function TechnicalVisualizer() {
       ]
 
       // Dessiner les arêtes
-      ctx.strokeStyle = "white"
+      ctx.strokeStyle = "rgb(var(--foreground))"
       ctx.lineWidth = 1
 
       edges.forEach(([a, b]) => {
@@ -93,7 +93,7 @@ export function TechnicalVisualizer() {
       const startX = canvas.width * 0.5
       const startY = canvas.height * 0.5
 
-      ctx.strokeStyle = "white"
+      ctx.strokeStyle = "rgb(var(--foreground))"
       ctx.lineWidth = 1.5
       ctx.beginPath()
 
@@ -122,7 +122,7 @@ export function TechnicalVisualizer() {
       const centerY = canvas.height * 0.25
       const maxRadius = Math.min(canvas.width, canvas.height) * 0.15
 
-      ctx.strokeStyle = "white"
+      ctx.strokeStyle = "rgb(var(--foreground))"
       ctx.lineWidth = 1
 
       for (let i = 1; i <= 5; i++) {
@@ -133,7 +133,7 @@ export function TechnicalVisualizer() {
       }
 
       // Ajouter un point au centre
-      ctx.fillStyle = "white"
+      ctx.fillStyle = "rgb(var(--foreground))"
       ctx.beginPath()
       ctx.arc(centerX, centerY, 2, 0, Math.PI * 2)
       ctx.fill()
@@ -146,7 +146,7 @@ export function TechnicalVisualizer() {
       const width = canvas.width * 0.3
       const height = canvas.height * 0.25
 
-      ctx.strokeStyle = "white"
+      ctx.strokeStyle = "rgb(var(--foreground))"
       ctx.lineWidth = 0.5
 
       // Lignes horizontales
@@ -170,7 +170,7 @@ export function TechnicalVisualizer() {
 
     // Fonction pour dessiner des indicateurs numériques
     const drawNumericIndicators = () => {
-      ctx.fillStyle = "white"
+      ctx.fillStyle = "rgb(var(--foreground))"
       ctx.font = "10px monospace"
       ctx.textAlign = "left"
 
@@ -206,28 +206,27 @@ export function TechnicalVisualizer() {
   }, [])
 
   return (
-    <div className="relative w-full h-64 border border-[#333333] bg-black rounded-lg overflow-hidden">
+    <div className="relative w-full h-64 border border-border bg-background rounded-lg overflow-hidden">
       <canvas ref={canvasRef} className="w-full h-full"></canvas>
 
       {/* Indicateurs techniques */}
-      <div className="absolute bottom-2 right-2 text-white text-2xl font-bold">
+      <div className="absolute bottom-2 right-2 text-foreground text-2xl font-bold">
         {Math.floor(Math.random() * 9000) + 1000}
       </div>
 
       <div className="absolute top-2 left-2 flex items-center gap-2">
-        <div className="w-2 h-2 bg-white rounded-full"></div>
-        <div className="text-xs text-[#999999]">{Math.floor(Math.random() * 90000) + 10000}</div>
+        <div className="w-2 h-2 bg-foreground rounded-full"></div>
+        <div className="text-xs text-muted-foreground">{Math.floor(Math.random() * 90000) + 10000}</div>
       </div>
 
       <div className="absolute bottom-2 left-2 flex items-center gap-2">
         <div className="flex gap-1">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="w-1 h-1 bg-white rounded-full"></div>
+            <div key={i} className="w-1 h-1 bg-foreground rounded-full"></div>
           ))}
         </div>
-        <div className="text-xs text-[#999999]">{Math.floor(Math.random() * 9000) + 1000}</div>
+        <div className="text-xs text-muted-foreground">{Math.floor(Math.random() * 9000) + 1000}</div>
       </div>
     </div>
   )
 }
-
