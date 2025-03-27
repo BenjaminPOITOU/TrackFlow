@@ -1,4 +1,6 @@
-import { Play, MoreHorizontal } from "lucide-react"
+"use client"
+
+import { Play, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface CompositionItemProps {
@@ -43,10 +45,19 @@ export function CompositionItem({ composition }: CompositionItemProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <span className="text-xs text-[#EFEFEF]">{composition.date}</span>
-        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full border border-[#333333]">
-          <MoreHorizontal size={16} />
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 rounded-full border border-[#333333] text-red-500 hover:bg-red-500/10"
+          onClick={(e) => {
+            e.stopPropagation()
+            // Ici vous pourriez ajouter une confirmation avant la suppression
+            console.log(`Deleting composition: ${composition.id}`)
+            // Logique de suppression à implémenter
+          }}
+        >
+          <Trash2 size={16} />
         </Button>
       </div>
     </div>

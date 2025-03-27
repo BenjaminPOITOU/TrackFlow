@@ -11,6 +11,7 @@ import {
   ChevronRight,
   FileMusic,
   Archive,
+  Trash2,
 } from "lucide-react"
 import { MiniVisualizer } from "@/components/mini-visualizer"
 import { UserMenu } from "@/components/user-menu"
@@ -24,6 +25,8 @@ interface SidebarProps {
 export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) {
   const [activeSection, setActiveSection] = useState("MAIN_SYS")
   const [expandedProject, setExpandedProject] = useState<number | null>(null)
+  const [projectsWithNotifications, setProjectsWithNotifications] = useState<number[]>([1, 3]) // Exemple: projets 1 et 3 ont des notifications
+  const [compositionsWithNotifications, setCompositionsWithNotifications] = useState<number[]>([102, 301]) // Exemple: compositions 102 et 301 ont des notifications
 
   // Données fictives pour les projets et compositions
   const projects = [
@@ -62,23 +65,23 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
   }
 
   return (
-    <aside className="w-64 h-full border-r border-border flex flex-col bg-background">
+    <aside className="w-64 h-full border-r border-[#333333] flex flex-col bg-[#0D0D0D]">
       {/* Logo */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-[#333333]">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full border border-foreground flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border border-[#FFFFFF] flex items-center justify-center">
             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
               <path d="M9 18V5l12-2v13" />
               <circle cx="6" cy="18" r="3" />
               <circle cx="18" cy="16" r="3" />
             </svg>
           </div>
-          <span className="text-lg font-bold tracking-tight text-foreground">SOUNDFLOW</span>
+          <span className="text-lg font-bold tracking-tight glow-text">SOUNDFLOW</span>
         </div>
       </div>
 
       {/* User Profile avec menu */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-[#333333]">
         <UserMenu onNavigate={handleNavigation} />
       </div>
 
@@ -86,10 +89,10 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
       <nav className="flex-1 p-2 overflow-auto">
         <div className="mb-4 relative">
           <div
-            className="px-2 py-1.5 text-xs text-muted-foreground uppercase tracking-wider flex justify-between items-center"
+            className="px-2 py-1.5 text-xs text-[#EFEFEF] uppercase tracking-wider flex justify-between items-center"
             onMouseEnter={() => setActiveSection("MAIN_SYS")}
           >
-            <span className={activeSection === "MAIN_SYS" ? "text-foreground" : ""}>MAIN_SYS</span>
+            <span className={activeSection === "MAIN_SYS" ? "glow-text" : ""}>MAIN_SYS</span>
             {activeSection === "MAIN_SYS" && (
               <div className="w-8 h-8">
                 <MiniVisualizer type="cube" />
@@ -101,9 +104,7 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
               <button
                 onClick={() => handleNavigation("DASHBOARD")}
                 className={`flex w-full items-center gap-3 px-3 py-2 rounded-md ${
-                  activeView === "DASHBOARD" 
-                    ? "bg-secondary text-secondary-foreground" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  activeView === "DASHBOARD" ? "bg-[#1e1e1e] text-[#FFFFFF]" : "hover:bg-[#1e1e1e] text-[#EFEFEF]"
                 }`}
               >
                 <Home size={18} />
@@ -114,9 +115,7 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
               <button
                 onClick={() => handleNavigation("PROJECTS")}
                 className={`flex w-full items-center gap-3 px-3 py-2 rounded-md ${
-                  activeView === "PROJECTS" 
-                    ? "bg-secondary text-secondary-foreground" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  activeView === "PROJECTS" ? "bg-[#1e1e1e] text-[#FFFFFF]" : "hover:bg-[#1e1e1e] text-[#EFEFEF]"
                 }`}
               >
                 <Music2 size={18} />
@@ -130,7 +129,7 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
                 <div className="flex items-center">
                   <button
                     onClick={() => toggleProject(project.id)}
-                    className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
+                    className="flex items-center gap-1 px-2 py-1 text-xs text-[#EFEFEF] hover:text-[#FFFFFF]"
                   >
                     {expandedProject === project.id ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   </button>
@@ -138,11 +137,16 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
                     onClick={() => handleNavigation("PROJECT_DETAIL", { projectId: project.id })}
                     className={`flex items-center gap-2 px-2 py-1 text-xs rounded ${
                       activeView === "PROJECT_DETAIL" && activeSection === `PROJECT_${project.id}`
-                        ? "text-foreground font-medium"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-[#FFFFFF] font-medium"
+                        : "text-[#EFEFEF] hover:text-[#FFFFFF]"
                     }`}
                   >
-                    {project.title}
+                    <span className="relative">
+                      {project.title}
+                      {projectsWithNotifications.includes(project.id) && (
+                        <span className="absolute -right-2 -top-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                      )}
+                    </span>
                   </button>
                 </div>
 
@@ -159,12 +163,17 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
                           }
                           className={`flex items-center gap-2 px-2 py-1 text-xs rounded ${
                             activeView === "COMPOSITION_DETAIL" && activeSection === `COMPOSITION_${composition.id}`
-                              ? "text-foreground bg-secondary"
-                              : "text-muted-foreground hover:text-foreground"
+                              ? "text-[#FFFFFF] bg-[#1e1e1e]"
+                              : "text-[#EFEFEF] hover:text-[#FFFFFF]"
                           }`}
                         >
                           <FileMusic size={12} />
-                          {composition.title}
+                          <span className="relative">
+                            {composition.title}
+                            {compositionsWithNotifications.includes(composition.id) && (
+                              <span className="absolute -right-2 -top-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                            )}
+                          </span>
                         </button>
                       </li>
                     ))}
@@ -177,9 +186,7 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
               <button
                 onClick={() => handleNavigation("PLAYLIST")}
                 className={`flex w-full items-center gap-3 px-3 py-2 rounded-md ${
-                  activeView === "PLAYLIST" 
-                    ? "bg-secondary text-secondary-foreground" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  activeView === "PLAYLIST" ? "bg-[#1e1e1e] text-[#FFFFFF]" : "hover:bg-[#1e1e1e] text-[#EFEFEF]"
                 }`}
               >
                 <PlaySquare size={18} />
@@ -190,25 +197,33 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
               <button
                 onClick={() => handleNavigation("ARCHIVED")}
                 className={`flex w-full items-center gap-3 px-3 py-2 rounded-md ${
-                  activeView === "ARCHIVED" 
-                    ? "bg-secondary text-secondary-foreground" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  activeView === "ARCHIVED" ? "bg-[#1e1e1e] text-[#FFFFFF]" : "hover:bg-[#1e1e1e] text-[#EFEFEF]"
                 }`}
               >
                 <Archive size={18} />
                 <span>ARCHIVED</span>
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => handleNavigation("TRASH")}
+                className={`flex w-full items-center gap-3 px-3 py-2 rounded-md ${
+                  activeView === "TRASH" ? "bg-[#1e1e1e] text-[#FFFFFF]" : "hover:bg-[#1e1e1e] text-[#EFEFEF]"
+                }`}
+              >
+                <Trash2 size={18} />
+                <span>TRASH</span>
+              </button>
+            </li>
           </ul>
         </div>
 
-        {/* Sections restantes similairement modifiées... */}
         <div className="mb-4 relative">
           <div
-            className="px-2 py-1.5 text-xs text-muted-foreground uppercase tracking-wider flex justify-between items-center"
+            className="px-2 py-1.5 text-xs text-[#EFEFEF] uppercase tracking-wider flex justify-between items-center"
             onMouseEnter={() => setActiveSection("COLLAB_SYS")}
           >
-            <span className={activeSection === "COLLAB_SYS" ? "text-foreground" : ""}>COLLAB_SYS</span>
+            <span className={activeSection === "COLLAB_SYS" ? "glow-text" : ""}>COLLAB_SYS</span>
             {activeSection === "COLLAB_SYS" && (
               <div className="w-8 h-8">
                 <MiniVisualizer type="wave" />
@@ -220,9 +235,7 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
               <button
                 onClick={() => handleNavigation("LISTENERS")}
                 className={`flex w-full items-center gap-3 px-3 py-2 rounded-md ${
-                  activeView === "LISTENERS" 
-                    ? "bg-secondary text-secondary-foreground" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  activeView === "LISTENERS" ? "bg-[#1e1e1e] text-[#FFFFFF]" : "hover:bg-[#1e1e1e] text-[#EFEFEF]"
                 }`}
               >
                 <Users size={18} />
@@ -233,9 +246,7 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
               <button
                 onClick={() => handleNavigation("SHARE")}
                 className={`flex w-full items-center gap-3 px-3 py-2 rounded-md ${
-                  activeView === "SHARE" 
-                    ? "bg-secondary text-secondary-foreground" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  activeView === "SHARE" ? "bg-[#1e1e1e] text-[#FFFFFF]" : "hover:bg-[#1e1e1e] text-[#EFEFEF]"
                 }`}
               >
                 <Share2 size={18} />
@@ -247,10 +258,10 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
 
         <div className="mb-4 relative">
           <div
-            className="px-2 py-1.5 text-xs text-muted-foreground uppercase tracking-wider flex justify-between items-center"
+            className="px-2 py-1.5 text-xs text-[#EFEFEF] uppercase tracking-wider flex justify-between items-center"
             onMouseEnter={() => setActiveSection("TOOLS_SYS")}
           >
-            <span className={activeSection === "TOOLS_SYS" ? "text-foreground" : ""}>TOOLS_SYS</span>
+            <span className={activeSection === "TOOLS_SYS" ? "glow-text" : ""}>TOOLS_SYS</span>
             {activeSection === "TOOLS_SYS" && (
               <div className="w-8 h-8">
                 <MiniVisualizer type="circles" />
@@ -262,9 +273,7 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
               <button
                 onClick={() => handleNavigation("COMPARE")}
                 className={`flex w-full items-center gap-3 px-3 py-2 rounded-md ${
-                  activeView === "COMPARE" 
-                    ? "bg-secondary text-secondary-foreground" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  activeView === "COMPARE" ? "bg-[#1e1e1e] text-[#FFFFFF]" : "hover:bg-[#1e1e1e] text-[#EFEFEF]"
                 }`}
               >
                 <GitCompare size={18} />
@@ -275,9 +284,7 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
               <button
                 onClick={() => handleNavigation("METADATA")}
                 className={`flex w-full items-center gap-3 px-3 py-2 rounded-md ${
-                  activeView === "METADATA" 
-                    ? "bg-secondary text-secondary-foreground" 
-                    : "hover:bg-secondary text-muted-foreground hover:text-foreground"
+                  activeView === "METADATA" ? "bg-[#1e1e1e] text-[#FFFFFF]" : "hover:bg-[#1e1e1e] text-[#EFEFEF]"
                 }`}
               >
                 <Tag size={18} />
@@ -290,3 +297,4 @@ export function Sidebar({ onNavigate, activeView = "DASHBOARD" }: SidebarProps) 
     </aside>
   )
 }
+

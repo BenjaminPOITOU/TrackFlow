@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { UserPlus, Trash2, Search, Settings, ChevronDown, X, Plus } from "lucide-react"
+import { Trash2, Search, Settings, ChevronDown, X, Plus } from "lucide-react"
 import { MiniVisualizer } from "@/components/mini-visualizer"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -185,10 +185,6 @@ export function ListenersView() {
           <p className="text-[#EFEFEF]">MANAGE_YOUR_COLLABORATORS</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button className="bg-transparent border border-[#FFFFFF] hover:bg-[#1e1e1e] text-[#FFFFFF] glow-button">
-            <UserPlus className="mr-2 h-4 w-4" /> INVITE_LISTENER
-          </Button>
-
           {/* Mini visualiseur dans le coin */}
           <div className="w-8 h-8">
             <MiniVisualizer type="grid" />
@@ -401,10 +397,10 @@ export function ListenersView() {
                         <div className="text-sm text-[#666666] py-2">NO_VERSIONS_ACCESSIBLE</div>
                       )}
                     </div>
-                    <Button className="w-full bg-transparent border border-[#333333] hover:bg-[#1e1e1e] text-[#EFEFEF] mt-2">
-                      <Plus size={14} className="mr-2" /> ADD_VERSION_ACCESS
-                    </Button>
                   </div>
+                  <Button className="w-full bg-transparent border border-[#333333] hover:bg-[#1e1e1e] text-[#EFEFEF] mt-2">
+                    <Plus size={14} className="mr-2" /> ADD_VERSION_ACCESS
+                  </Button>
                 </div>
               </>
             )}

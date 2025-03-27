@@ -25,6 +25,7 @@ export function ProjectCard({ project, onArchive, onDuplicate, onDelete }: Proje
   const animationRef = useRef<number | null>(null)
   const rotationRef = useRef(0)
 
+  // Générer une forme géométrique unique pour chaque projet
   const generateShape = (id: number, ctx: CanvasRenderingContext2D, time: number) => {
     const shapes = ["triangle", "square", "diamond", "circle"]
     const shape = shapes[id % shapes.length]
@@ -32,7 +33,7 @@ export function ProjectCard({ project, onArchive, onDuplicate, onDelete }: Proje
     const centerY = ctx.canvas.height / 2
     const size = Math.min(ctx.canvas.width, ctx.canvas.height) * 0.4
 
-    ctx.strokeStyle = "rgb(var(--foreground))"
+    ctx.strokeStyle = "#FFFFFF"
     ctx.lineWidth = 1
     ctx.save()
     ctx.translate(centerX, centerY)
@@ -71,19 +72,21 @@ export function ProjectCard({ project, onArchive, onDuplicate, onDelete }: Proje
     ctx.restore()
   }
 
+  // Déterminer la couleur en fonction du statut
   const getStatusColor = (status: string) => {
     switch (status) {
       case "IN_PROGRESS":
-        return "bg-primary" // Utilise la couleur primaire
+        return "bg-[#00A3FF]" // Bleu
       case "PENDING":
-        return "bg-yellow-500" // Conserve la couleur spécifique pour le statut
+        return "bg-[#FFB800]" // Ambre
       case "COMPLETED":
-        return "bg-green-500" // Conserve la couleur spécifique pour le statut
+        return "bg-[#00FF85]" // Vert
       default:
-        return "bg-foreground" // Utilise la couleur de premier plan
+        return "bg-[#FFFFFF]" // Blanc par défaut
     }
   }
 
+  // Animation du texte console
   useEffect(() => {
     if (!isHovered) {
       setConsoleText("HMNRM: 04.2")
@@ -102,6 +105,7 @@ export function ProjectCard({ project, onArchive, onDuplicate, onDelete }: Proje
     return () => clearInterval(interval)
   }, [isHovered])
 
+  // Animation de la forme
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -109,6 +113,7 @@ export function ProjectCard({ project, onArchive, onDuplicate, onDelete }: Proje
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    // Définir la taille du canvas
     canvas.width = 40
     canvas.height = 40
 
@@ -135,8 +140,8 @@ export function ProjectCard({ project, onArchive, onDuplicate, onDelete }: Proje
 
   return (
     <Card
-      className={`bg-card border border-border transition-all duration-300 ${
-        isHovered ? "border-foreground shadow-lg" : ""
+      className={`bg-[#0D0D0D] border border-[#333333] transition-all duration-300 ${
+        isHovered ? "border-[#FFFFFF] glow-card" : ""
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -148,12 +153,12 @@ export function ProjectCard({ project, onArchive, onDuplicate, onDelete }: Proje
           </div>
           <div className="flex items-center">
             <div className={`w-2 h-2 rounded-full ${getStatusColor(project.status)} mr-2`}></div>
-            <span className="text-xs text-muted-foreground">{project.status}</span>
+            <span className="text-xs text-[#EFEFEF]">{project.status}</span>
             <ProjectMenu onArchive={onArchive} onDuplicate={onDuplicate} onDelete={onDelete} />
           </div>
         </div>
 
-        <h3 className="font-medium mb-2 text-foreground">{project.title}</h3>
+        <h3 className="font-medium mb-2 glow-text-sm">{project.title}</h3>
 
         <div className="flex flex-wrap gap-1 mb-3">
           {project.tags.map((tag, index) => (
@@ -163,7 +168,7 @@ export function ProjectCard({ project, onArchive, onDuplicate, onDelete }: Proje
           ))}
         </div>
 
-        <div className="text-xs text-muted-foreground flex items-center justify-between">
+        <div className="text-xs text-[#EFEFEF] flex items-center justify-between">
           <span>{project.lastUpdated}</span>
           <span className="font-mono">{consoleText}</span>
         </div>
@@ -171,3 +176,4 @@ export function ProjectCard({ project, onArchive, onDuplicate, onDelete }: Proje
     </Card>
   )
 }
+

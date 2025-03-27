@@ -27,7 +27,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "SoundFlow - Gestion de projets musicaux",
   description: "Plateforme de gestion de projets musicaux avec visualisation audio avancée",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -49,6 +48,3 @@ export default function RootLayout({
   )
 }
 
-
-
-import './globals.css'

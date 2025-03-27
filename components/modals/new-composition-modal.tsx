@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { X, Music, Upload, Clock, Hash } from "lucide-react"
+import { X, Music, Upload } from "lucide-react"
 import { MiniVisualizer } from "@/components/mini-visualizer"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -14,91 +14,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 interface NewCompositionModalProps {
   onClose: () => void
   onSave?: (data: any) => void
+  projectGenre?: string
 }
 
-export function NewCompositionModal({ onClose, onSave }: NewCompositionModalProps) {
+export function NewCompositionModal(props: NewCompositionModalProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [tempo, setTempo] = useState("")
-  const [key, setKey] = useState("")
   const [status, setStatus] = useState("EBAUCHE")
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  const [selectedInstruments, setSelectedInstruments] = useState<string[]>([])
   const [image, setImage] = useState<string | null>(null)
 
-  const availableGenres = [
-    "ELECTRONIC",
-    "AMBIENT",
-    "JAZZ",
-    "FUSION",
-    "POP",
-    "ROCK",
-    "CLASSICAL",
-    "HIP-HOP",
-    "R&B",
-    "FOLK",
-    "COUNTRY",
-    "METAL",
-  ]
-
-  const availableInstruments = [
-    "SYNTH",
-    "DRUMS",
-    "BASS",
-    "GUITAR",
-    "PIANO",
-    "VOCALS",
-    "STRINGS",
-    "BRASS",
-    "WOODWINDS",
-    "PERCUSSION",
-    "AMBIENT_TEXTURES",
-  ]
-
-  const availableKeys = [
-    "C MAJOR",
-    "C MINOR",
-    "C# MAJOR",
-    "C# MINOR",
-    "D MAJOR",
-    "D MINOR",
-    "D# MAJOR",
-    "D# MINOR",
-    "E MAJOR",
-    "E MINOR",
-    "F MAJOR",
-    "F MINOR",
-    "F# MAJOR",
-    "F# MINOR",
-    "G MAJOR",
-    "G MINOR",
-    "G# MAJOR",
-    "G# MINOR",
-    "A MAJOR",
-    "A MINOR",
-    "A# MAJOR",
-    "A# MINOR",
-    "B MAJOR",
-    "B MINOR",
-  ]
+  const [subGenre, setSubGenre] = useState<string>("")
+  const projectGenre = props.projectGenre || "ELECTRONIC"
 
   const statusOptions = ["EBAUCHE", "EN_COURS", "A_FINALISER", "TERMINÉ"]
-
-  const toggleGenre = (genre: string) => {
-    if (selectedGenres.includes(genre)) {
-      setSelectedGenres(selectedGenres.filter((g) => g !== genre))
-    } else {
-      setSelectedGenres([...selectedGenres, genre])
-    }
-  }
-
-  const toggleInstrument = (instrument: string) => {
-    if (selectedInstruments.includes(instrument)) {
-      setSelectedInstruments(selectedInstruments.filter((i) => i !== instrument))
-    } else {
-      setSelectedInstruments([...selectedInstruments, instrument])
-    }
-  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -111,16 +39,16 @@ export function NewCompositionModal({ onClose, onSave }: NewCompositionModalProp
     }
   }
 
+  const { onClose, onSave } = props
+
   const handleSave = () => {
     if (onSave) {
       onSave({
         title,
         description,
-        tempo,
-        key,
         status,
-        genres: selectedGenres,
-        instruments: selectedInstruments,
+        projectGenre,
+        subGenre,
         image,
       })
     }
@@ -158,7 +86,7 @@ export function NewCompositionModal({ onClose, onSave }: NewCompositionModalProp
 
         {/* Formulaire */}
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="composition-title" className="text-[#EFEFEF]">
                 COMPOSITION_TITLE
@@ -173,112 +101,45 @@ export function NewCompositionModal({ onClose, onSave }: NewCompositionModalProp
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="composition-tempo" className="text-[#EFEFEF] flex items-center gap-1">
-                <Clock size={14} /> TEMPO (BPM)
+              <Label htmlFor="composition-status" className="text-[#EFEFEF]">
+                STATUS
               </Label>
-              <Input
-                id="composition-tempo"
-                placeholder="e.g. 120"
-                value={tempo}
-                onChange={(e) => setTempo(e.target.value)}
-                className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF] focus-visible:ring-[#FFFFFF]"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="composition-key" className="text-[#EFEFEF] flex items-center gap-1">
-                <Hash size={14} /> KEY
-              </Label>
-              <Select value={key} onValueChange={setKey}>
+              <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                  <SelectValue placeholder="Select key" />
+                  <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                  {availableKeys.map((k) => (
-                    <SelectItem key={k} value={k}>
-                      {k}
+                  {statusOptions.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="composition-status" className="text-[#EFEFEF]">
-              STATUS
-            </Label>
-            <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                {statusOptions.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {s}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-[#EFEFEF]">GENRES</Label>
-              <Select>
-                <SelectTrigger className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                  <SelectValue placeholder="Select genre" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                  {availableGenres.map((genre) => (
-                    <SelectItem key={genre} value={genre.toLowerCase()} onClick={() => toggleGenre(genre)}>
-                      {genre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {selectedGenres.map((genre) => (
-                  <div
-                    key={genre}
-                    className={`border border-[#333333] px-1.5 py-0 text-xs branch-${genre.toLowerCase()} cursor-pointer`}
-                    onClick={() => toggleGenre(genre)}
-                  >
-                    {genre} <span className="ml-1">×</span>
-                  </div>
-                ))}
-              </div>
+              <Label className="text-[#EFEFEF]">PROJECT_GENRE</Label>
+              <div className="p-3 bg-[#1e1e1e] border border-[#333333] rounded-md text-[#EFEFEF]">{projectGenre}</div>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[#EFEFEF]">INSTRUMENTS</Label>
-              <Select>
+              <Label className="text-[#EFEFEF]">SUB_GENRE</Label>
+              <Select value={subGenre} onValueChange={setSubGenre}>
                 <SelectTrigger className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                  <SelectValue placeholder="Select instruments" />
+                  <SelectValue placeholder="Select sub-genre" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                  {availableInstruments.map((instrument) => (
-                    <SelectItem
-                      key={instrument}
-                      value={instrument.toLowerCase()}
-                      onClick={() => toggleInstrument(instrument)}
-                    >
-                      {instrument}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="AMBIENT">AMBIENT</SelectItem>
+                  <SelectItem value="TECHNO">TECHNO</SelectItem>
+                  <SelectItem value="HOUSE">HOUSE</SelectItem>
+                  <SelectItem value="TRANCE">TRANCE</SelectItem>
+                  <SelectItem value="DRUM_AND_BASS">DRUM_AND_BASS</SelectItem>
+                  <SelectItem value="EXPERIMENTAL">EXPERIMENTAL</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {selectedInstruments.map((instrument) => (
-                  <div
-                    key={instrument}
-                    className={`border border-[#333333] px-1.5 py-0 text-xs branch-${instrument.toLowerCase().replace("_", "-")} cursor-pointer`}
-                    onClick={() => toggleInstrument(instrument)}
-                  >
-                    {instrument} <span className="ml-1">×</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 

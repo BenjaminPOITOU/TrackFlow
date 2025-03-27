@@ -4,43 +4,51 @@
 
 @layer base {
   :root {
-    --background: 240 5% 85%;
-    /* Gris très clair (maintenu) */
-    --foreground: 240 5% 20%;
-    /* Texte sombre */
-
-    /* Nouveaux tons pour les sections internes (plus clairs) */
-    --card: 240 5% 92%;
-    /* Gris ultra clair pour les sections */
-    --card-foreground: 240 5% 15%;
-
-    --popover: 240 5% 90%;
-    --popover-foreground: 240 5% 15%;
-
-    --primary: 240 5% 25%;
-    /* Couleur d'accent */
-    --primary-foreground: 240 5% 95%;
-
-    --secondary: 240 5% 92%;
-    --secondary-foreground: 240 5% 25%;
-
-    --muted: 240 5% 80%;
-    --muted-foreground: 240 5% 30%;
-
-    --accent: 240 5% 90%;
-    --accent-foreground: 240 5% 25%;
-
-    --destructive: 0 72% 51%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 240 5% 75%;
-    /* Bordure légèrement plus foncée */
-    --input: 240 5% 95%;
-    /* Champs de formulaire très clairs */
-    --ring: 240 5% 20%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 0 0% 100%;
     --radius: 0.25rem;
   }
+
+  .dark {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 100%;
+  }
 }
+
 @layer base {
   * {
     @apply border-border;

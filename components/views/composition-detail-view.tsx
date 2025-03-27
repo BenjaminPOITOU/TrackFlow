@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+// Ajouter l'import pour le bouton de suppression si nécessaire
 import {
   Play,
   Pause,
@@ -22,10 +23,10 @@ import {
   Edit,
   Check,
   X,
+  Trash2,
 } from "lucide-react"
 import { MiniVisualizer } from "@/components/mini-visualizer"
 import { Slider } from "@/components/ui/slider"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
@@ -303,9 +304,11 @@ interface CompositionDetailViewProps {
 }
 
 export function CompositionDetailView({ projectId, compositionId }: CompositionDetailViewProps) {
+  // Ajouter ces états au début du composant CompositionDetailView, après les autres déclarations d'état
+  const [isStatusEditing, setIsStatusEditing] = useState(false)
+  const [compositionStatus, setCompositionStatus] = useState("IN_PROGRESS") // Statut initial
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const [activeTab, setActiveTab] = useState("versions")
   const [selectedVersion, setSelectedVersion] = useState<number | null>(1)
   const [showAnnotationFormInternal, setShowAnnotationFormInternal] = useState(false)
   const [annotationTimeMarker, setAnnotationTimeMarker] = useState("")
@@ -320,8 +323,13 @@ export function CompositionDetailView({ projectId, compositionId }: CompositionD
   const [newBranchName, setNewBranchName] = useState("")
   const [newBranchDescription, setNewBranchDescription] = useState("")
   const [versionName, setVersionName] = useState("")
-  const [versionDescription, setVersionDescription] = useState("")
   const [showBranchView, setShowBranchView] = useState(false)
+  const [selectedBranchForView, setSelectedBranchForView] = useState("all")
+
+  // Ajouter des variables d'état pour suivre les versions avec des annotations d'auditeurs extérieurs
+  // Ajouter après les autres déclarations d'état (vers la ligne 320)
+  const [versionsWithExternalAnnotations, setVersionsWithExternalAnnotations] = useState<number[]>([3, 4, 6, 7]) // Versions avec annotations d'auditeurs extérieurs
+  const [externalAnnotations, setExternalAnnotations] = useState<number[]>([1, 3, 4]) // IDs des annotations faites par des auditeurs extérieurs
 
   // Données fictives pour la composition
   const composition = {
@@ -332,7 +340,8 @@ export function CompositionDetailView({ projectId, compositionId }: CompositionD
     key: "C MINOR",
     instruments: ["SYNTH", "DRUMS", "BASS", "AMBIENT_TEXTURES"],
     duration: "1:56",
-    genre: "ELECTRONIC / AMBIENT",
+    genre: "ELECTRONIC",
+    subGenre: "AMBIENT",
     createdAt: "22/03/2025",
     lastModified: "24/03/2025",
     totalVersions: 7,
@@ -403,6 +412,9 @@ export function CompositionDetailView({ projectId, compositionId }: CompositionD
       versionId: 5,
     },
   ]
+
+  // Obtenir toutes les branches uniques
+  const uniqueBranches = ["all", ...new Set(versions.map((v) => v.branch))]
 
   // Fonction pour formater le temps (secondes -> MM:SS)
   const formatTime = (time: number) => {
@@ -610,6 +622,10 @@ export function CompositionDetailView({ projectId, compositionId }: CompositionD
     // Ne pas réinitialiser le timeMarker pour permettre d'ajouter plusieurs annotations au même point
   }
 
+  // Filtrer les versions en fonction de la branche sélectionnée
+  const filteredVersions =
+    selectedBranchForView === "all" ? versions : versions.filter((v) => v.branch === selectedBranchForView)
+
   // Filtrer les annotations pour la version sélectionnée
   const filteredAnnotations = selectedVersion ? annotations.filter((a) => a.versionId === selectedVersion) : annotations
 
@@ -622,220 +638,300 @@ export function CompositionDetailView({ projectId, compositionId }: CompositionD
 
   const showAnnotationForm = showAnnotationFormInternal
 
+  // Ajouter cette fonction de suppression d'annotation après les autres fonctions du composant, avant le return
+  const handleDeleteAnnotation = (annotationId: number) => {
+    // Dans une application réelle, cela enverrait une requête à l'API
+    console.log(`Deleting annotation: ${annotationId}`)
+    // Simuler la suppression en filtrant l'annotation
+    // Dans une application réelle, vous mettriez à jour l'état avec les données de l'API
+  }
+
   return (
     <div className="space-y-8">
-      {/* En-tête */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight glow-text">{composition.title}</h1>
-          <p className="text-[#EFEFEF]">
-            PROJECT: ALBUM_CONCEPT • {composition.totalVersions} VERSIONS • {composition.totalBranches} BRANCHES
-          </p>
+      {/* En-tête avec genre */}
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Badge className={`${getGenreColor(composition.genre).bg} ${getGenreColor(composition.genre).text}`}>
+            {composition.genre}
+          </Badge>
+          <Badge className={`${getGenreColor(composition.subGenre).bg} ${getGenreColor(composition.subGenre).text}`}>
+            {composition.subGenre}
+          </Badge>
         </div>
-        <div className="flex items-center gap-2">
-          <Dialog open={showNewVersionDialog} onOpenChange={setShowNewVersionDialog}>
-            <DialogTrigger asChild>
-              <Button className="bg-transparent border border-[#FFFFFF] hover:bg-[#1e1e1e] text-[#FFFFFF] glow-button">
-                <Plus className="mr-2 h-4 w-4" /> NEW_VERSION
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-[#0D0D0D] border border-[#333333] text-[#EFEFEF] max-w-md">
-              <DialogHeader>
-                <DialogTitle className="text-xl font-bold tracking-tight glow-text">NEW_VERSION</DialogTitle>
-                <DialogDescription className="text-[#EFEFEF]">
-                  Create a new version of your composition.
-                </DialogDescription>
-              </DialogHeader>
 
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="branch">BRANCH</Label>
+        {/* Modifier la section du titre pour inclure le statut et le bouton d'édition */}
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-2xl font-bold tracking-tight glow-text">{composition.title}</h1>
+              <div className="flex items-center gap-2">
+                {!isStatusEditing ? (
+                  <>
+                    <Badge
+                      className={`${
+                        compositionStatus === "NOT_STARTED"
+                          ? "bg-gray-500"
+                          : compositionStatus === "IN_PROGRESS"
+                            ? "bg-blue-500"
+                            : compositionStatus === "ALMOST_DONE"
+                              ? "bg-yellow-500"
+                              : compositionStatus === "COMPLETED"
+                                ? "bg-green-500"
+                                : "bg-red-500"
+                      } text-white`}
+                    >
+                      {compositionStatus}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 rounded-full"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setIsStatusEditing(true)
+                      }}
+                    >
+                      <Edit size={12} />
+                    </Button>
+                  </>
+                ) : (
                   <div className="flex items-center gap-2">
-                    <Select value={selectedBranch} onValueChange={setSelectedBranch}>
-                      <SelectTrigger className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF] flex-1">
-                        <SelectValue placeholder="Select branch" />
+                    <Select
+                      value={compositionStatus}
+                      onValueChange={(value) => {
+                        setCompositionStatus(value)
+                        setIsStatusEditing(false)
+                      }}
+                    >
+                      <SelectTrigger className="h-7 w-36 text-xs bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
+                        <SelectValue placeholder="Status" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                        <SelectItem value="main">main</SelectItem>
-                        <SelectItem value="feature/vocals">feature/vocals</SelectItem>
-                        <SelectItem value="feature/drums">feature/drums</SelectItem>
+                        <SelectItem value="NOT_STARTED">NOT_STARTED</SelectItem>
+                        <SelectItem value="IN_PROGRESS">IN_PROGRESS</SelectItem>
+                        <SelectItem value="ALMOST_DONE">ALMOST_DONE</SelectItem>
+                        <SelectItem value="COMPLETED">COMPLETED</SelectItem>
+                        <SelectItem value="ON_HOLD">ON_HOLD</SelectItem>
                       </SelectContent>
                     </Select>
                     <Button
-                      variant="outline"
-                      className="border-[#333333] text-[#EFEFEF]"
-                      onClick={() => setCreateNewBranch(!createNewBranch)}
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 rounded-full"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setIsStatusEditing(false)
+                      }}
                     >
-                      {createNewBranch ? "USE_EXISTING" : "NEW_BRANCH"}
+                      <X size={12} />
                     </Button>
                   </div>
-                </div>
-
-                {createNewBranch && (
-                  <>
-                    <div className="space-y-2">
-                      <Label htmlFor="new-branch-name">BRANCH_NAME</Label>
-                      <Input
-                        id="new-branch-name"
-                        placeholder="feature/name"
-                        value={newBranchName}
-                        onChange={(e) => setNewBranchName(e.target.value)}
-                        className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="new-branch-description">BRANCH_DESCRIPTION</Label>
-                      <Textarea
-                        id="new-branch-description"
-                        placeholder="Describe the purpose of this branch"
-                        value={newBranchDescription}
-                        onChange={(e) => setNewBranchDescription(e.target.value)}
-                        className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF] min-h-[80px]"
-                      />
-                    </div>
-                  </>
                 )}
+              </div>
+            </div>
+            <p className="text-[#EFEFEF]">
+              PROJECT: ALBUM_CONCEPT • {composition.totalVersions} VERSIONS • {composition.totalBranches} BRANCHES
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Dialog open={showNewVersionDialog} onOpenChange={setShowNewVersionDialog}>
+              <DialogTrigger asChild>
+                <Button className="bg-transparent border border-[#FFFFFF] hover:bg-[#1e1e1e] text-[#FFFFFF] glow-button">
+                  <Plus className="mr-2 h-4 w-4" /> NEW_VERSION
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#0D0D0D] border border-[#333333] text-[#EFEFEF] max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold tracking-tight glow-text">NEW_VERSION</DialogTitle>
+                  <DialogDescription className="text-[#EFEFEF]">
+                    Create a new version of your composition.
+                  </DialogDescription>
+                </DialogHeader>
 
-                <div className="space-y-2">
-                  <Label htmlFor="version-name">VERSION_NAME</Label>
-                  <Input
-                    id="version-name"
-                    placeholder="V1.0"
-                    value={versionName}
-                    onChange={(e) => setVersionName(e.target.value)}
-                    className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]"
-                  />
-                </div>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="branch">BRANCH</Label>
+                    <div className="flex items-center gap-2">
+                      <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+                        <SelectTrigger className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF] flex-1">
+                          <SelectValue placeholder="Select branch" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
+                          <SelectItem value="main">main</SelectItem>
+                          <SelectItem value="feature/vocals">feature/vocals</SelectItem>
+                          <SelectItem value="feature/drums">feature/drums</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="outline"
+                        className="border-[#333333] text-[#EFEFEF]"
+                        onClick={() => setCreateNewBranch(!createNewBranch)}
+                      >
+                        {createNewBranch ? "USE_EXISTING" : "NEW_BRANCH"}
+                      </Button>
+                    </div>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="version-description">VERSION_DESCRIPTION</Label>
-                  <Textarea
-                    id="version-description"
-                    placeholder="Describe the changes in this version"
-                    value={versionDescription}
-                    onChange={(e) => setVersionDescription(e.target.value)}
-                    className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF] min-h-[80px]"
-                  />
-                </div>
+                  {createNewBranch && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="new-branch-name">BRANCH_NAME</Label>
+                        <Input
+                          id="new-branch-name"
+                          placeholder="feature/name"
+                          value={newBranchName}
+                          onChange={(e) => setNewBranchName(e.target.value)}
+                          className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="new-branch-description">BRANCH_DESCRIPTION</Label>
+                        <Textarea
+                          id="new-branch-description"
+                          placeholder="Describe the purpose of this branch"
+                          value={newBranchDescription}
+                          onChange={(e) => setNewBranchDescription(e.target.value)}
+                          className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF] min-h-[80px]"
+                        />
+                      </div>
+                    </>
+                  )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="audio-file">AUDIO_FILE</Label>
-                  <div className="flex items-center gap-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="version-name">VERSION_NAME</Label>
                     <Input
-                      id="audio-file"
-                      type="file"
-                      accept="audio/*"
+                      id="version-name"
+                      placeholder="V1.0"
+                      value={versionName}
+                      onChange={(e) => setVersionName(e.target.value)}
                       className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]"
                     />
                   </div>
-                </div>
-                <div className="space-y-2 pt-4 border-t border-[#333333]">
-                  <Label className="text-[#EFEFEF] flex items-center gap-2">
-                    <MessageSquare size={14} /> PREVIOUS_VERSION_ANNOTATIONS
-                  </Label>
-                  <div className="max-h-[200px] overflow-y-auto border border-[#333333] rounded-md">
-                    {annotations
-                      .filter((a) => a.versionId === selectedVersion)
-                      .map((annotation) => (
-                        <div
-                          key={annotation.id}
-                          className="p-3 border-b border-[#333333] flex items-start justify-between"
-                        >
-                          <div className="flex items-start gap-2">
-                            <div className="flex items-center justify-center mt-1">
-                              <input
-                                type="checkbox"
-                                id={`annotation-${annotation.id}`}
-                                className="rounded border-[#333333] bg-[#0D0D0D]"
-                                defaultChecked
-                              />
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <div className="border border-[#333333] px-1.5 py-0 text-xs">
-                                  {annotation.timeMarker}
-                                </div>
-                                <span className="text-xs font-medium">{annotation.type}</span>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="audio-file">AUDIO_FILE</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="audio-file"
+                        type="file"
+                        accept="audio/*"
+                        className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2 pt-4 border-t border-[#333333]">
+                    <Label className="text-[#EFEFEF] flex items-center gap-2">
+                      <MessageSquare size={14} /> PREVIOUS_VERSION_ANNOTATIONS
+                    </Label>
+                    <div className="max-h-[200px] overflow-y-auto border border-[#333333] rounded-md">
+                      {annotations
+                        .filter((a) => a.versionId === selectedVersion)
+                        .map((annotation) => (
+                          <div
+                            key={annotation.id}
+                            className="p-3 border-b border-[#333333] flex items-start justify-between"
+                          >
+                            <div className="flex items-start gap-2">
+                              <div className="flex items-center justify-center mt-1">
+                                <input
+                                  type="checkbox"
+                                  id={`annotation-${annotation.id}`}
+                                  className="rounded border-[#333333] bg-[#0D0D0D]"
+                                  defaultChecked
+                                />
                               </div>
-                              <p className="text-xs mt-1">{annotation.content}</p>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <div className="border border-[#333333] px-1.5 py-0 text-xs">
+                                    {annotation.timeMarker}
+                                  </div>
+                                  <span className="text-xs font-medium">{annotation.type}</span>
+                                </div>
+                                <p className="text-xs mt-1">{annotation.content}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Select defaultValue={annotation.status}>
+                                <SelectTrigger className="h-7 w-28 text-xs bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
+                                  <SelectValue placeholder="Status" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
+                                  <SelectItem value="PENDING">PENDING</SelectItem>
+                                  <SelectItem value="IN_PROGRESS">IN_PROGRESS</SelectItem>
+                                  <SelectItem value="RESOLVED">RESOLVED</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 rounded-full text-[#00FF85]"
+                                title="Validate"
+                              >
+                                <Check size={14} />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 rounded-full text-[#EF4444]"
+                                title="Remove"
+                              >
+                                <X size={14} />
+                              </Button>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Select defaultValue={annotation.status}>
-                              <SelectTrigger className="h-7 w-28 text-xs bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                                <SelectValue placeholder="Status" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                                <SelectItem value="PENDING">PENDING</SelectItem>
-                                <SelectItem value="IN_PROGRESS">IN_PROGRESS</SelectItem>
-                                <SelectItem value="RESOLVED">RESOLVED</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6 rounded-full text-[#00FF85]"
-                              title="Validate"
-                            >
-                              <Check size={14} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6 rounded-full text-[#EF4444]"
-                              title="Remove"
-                            >
-                              <X size={14} />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    {annotations.filter((a) => a.versionId === selectedVersion).length === 0 && (
-                      <div className="p-4 text-center text-[#666666]">NO_ANNOTATIONS_IN_SELECTED_VERSION</div>
-                    )}
-                  </div>
-                  <div className="text-xs text-[#EFEFEF] italic">
-                    Select annotations to transfer to the new version. You can update their status or validate/remove
-                    them.
+                        ))}
+                      {annotations.filter((a) => a.versionId === selectedVersion).length === 0 && (
+                        <div className="p-4 text-center text-[#666666]">NO_ANNOTATIONS_IN_SELECTED_VERSION</div>
+                      )}
+                    </div>
+                    <div className="text-xs text-[#EFEFEF] italic">
+                      Select annotations to transfer to the new version. You can update their status or validate/remove
+                      them.
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  className="border-[#333333] text-[#EFEFEF]"
-                  onClick={() => setShowNewVersionDialog(false)}
-                >
-                  CANCEL
-                </Button>
-                <Button
-                  className="bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#EFEFEF]"
-                  onClick={() => {
-                    // Ici, on simulerait l'ajout d'une version
-                    setShowNewVersionDialog(false)
-                    // Réinitialiser les champs
-                    setCreateNewBranch(false)
-                    setNewBranchName("")
-                    setNewBranchDescription("")
-                    setVersionName("")
-                    setVersionDescription("")
-                  }}
-                >
-                  CREATE_VERSION
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full border border-[#333333]">
-            <Edit size={16} />
-          </Button>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    className="border-[#333333] text-[#EFEFEF]"
+                    onClick={() => setShowNewVersionDialog(false)}
+                  >
+                    CANCEL
+                  </Button>
+                  <Button
+                    className="bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#EFEFEF]"
+                    onClick={() => {
+                      // Ici, on simulerait l'ajout d'une version
+                      setShowNewVersionDialog(false)
+                      // Réinitialiser les champs
+                      setCreateNewBranch(false)
+                      setNewBranchName("")
+                      setNewBranchDescription("")
+                      setVersionName("")
+                    }}
+                  >
+                    CREATE_VERSION
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full border border-[#333333]">
+              <Edit size={16} />
+            </Button>
 
-          {/* Mini visualiseur dans le coin */}
-          <div className="w-8 h-8">
-            <MiniVisualizer type="wave" />
+            {/* Mini visualiseur dans le coin */}
+            <div className="w-8 h-8">
+              <MiniVisualizer type="wave" />
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* Description */}
+      <div className="bg-[#0D0D0D] border border-[#333333] rounded-lg p-4">
+        <h3 className="text-sm font-medium mb-2">DESCRIPTION</h3>
+        <p className="text-[#EFEFEF]">{composition.description}</p>
       </div>
 
       {/* Informations sur la composition */}
@@ -867,30 +963,8 @@ export function CompositionDetailView({ projectId, compositionId }: CompositionD
         <div className="bg-[#0D0D0D] border border-[#333333] rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
             <Tag size={16} className="text-[#EFEFEF]" />
-            <h3 className="text-sm font-medium">GENRE</h3>
+            <h3 className="text-sm font-medium">INSTRUMENTS</h3>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {composition.genre.split(" / ").map((genre, index) => {
-              const { bg, text } = getGenreColor(genre)
-              return (
-                <Badge key={index} className={`${bg} ${text}`}>
-                  {genre}
-                </Badge>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Description et instruments */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="md:col-span-2 bg-[#0D0D0D] border border-[#333333] rounded-lg p-4">
-          <h3 className="text-sm font-medium mb-2">DESCRIPTION</h3>
-          <p className="text-[#EFEFEF]">{composition.description}</p>
-        </div>
-
-        <div className="bg-[#0D0D0D] border border-[#333333] rounded-lg p-4">
-          <h3 className="text-sm font-medium mb-2">INSTRUMENTS</h3>
           <div className="flex flex-wrap gap-2">
             {composition.instruments.map((instrument, index) => (
               <Badge key={index} className={`${getInstrumentColor(instrument)}`}>
@@ -1092,12 +1166,36 @@ export function CompositionDetailView({ projectId, compositionId }: CompositionD
                             {statusAnnotations.map((annotation) => (
                               <div
                                 key={annotation.id}
-                                className="text-xs p-1 border border-[#333333] rounded mb-1 flex items-start"
+                                className={`text-xs p-1 border ${
+                                  externalAnnotations.includes(annotation.id)
+                                    ? "border-red-500 bg-red-500/10"
+                                    : "border-[#333333]"
+                                } rounded mb-1 flex items-start justify-between group`}
                               >
-                                <div className="bg-[#1e1e1e] px-1 py-0.5 rounded mr-1 min-w-[30px] text-center">
-                                  {annotation.timeMarker}
+                                <div className="flex items-start">
+                                  <div className="bg-[#1e1e1e] px-1 py-0.5 rounded mr-1 min-w-[30px] text-center">
+                                    {annotation.timeMarker}
+                                  </div>
+                                  <div className="flex-1">
+                                    {externalAnnotations.includes(annotation.id) && (
+                                      <span className="text-red-500 font-bold mr-1">[EXTERNAL]</span>
+                                    )}
+                                    {annotation.content}
+                                  </div>
                                 </div>
-                                <div className="flex-1">{annotation.content}</div>
+                                <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-4 w-4 rounded-full text-red-500 hover:bg-red-500/10"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleDeleteAnnotation(annotation.id)
+                                    }}
+                                  >
+                                    <Trash2 size={10} />
+                                  </Button>
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -1112,191 +1210,94 @@ export function CompositionDetailView({ projectId, compositionId }: CompositionD
         </div>
       </div>
 
-      {/* Onglets pour les versions et annotations */}
-      <Tabs defaultValue="versions" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="bg-[#0D0D0D] border border-[#333333] p-1">
-          <TabsTrigger value="versions" className="data-[state=active]:bg-[#1e1e1e] data-[state=active]:text-[#FFFFFF]">
-            VERSIONS
-          </TabsTrigger>
-          <TabsTrigger
-            value="annotations"
-            className="data-[state=active]:bg-[#1e1e1e] data-[state=active]:text-[#FFFFFF]"
-          >
-            ANNOTATIONS
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="versions" className="mt-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-medium glow-text-sm">VERSION_HISTORY</h2>
+      {/* Section versions */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-medium glow-text-sm">VERSION_HISTORY</h2>
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Button
-                className="bg-transparent border border-[#333333] hover:bg-[#1e1e1e] text-[#EFEFEF]"
-                onClick={() => setShowBranchView(true)}
-              >
-                <GitBranch size={16} className="mr-2" /> BRANCH_VIEW
-              </Button>
+              <Label htmlFor="branch-filter" className="text-sm">
+                BRANCH:
+              </Label>
+              <Select value={selectedBranchForView} onValueChange={setSelectedBranchForView}>
+                <SelectTrigger id="branch-filter" className="w-40 bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
+                  <SelectValue placeholder="Select branch" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
+                  {uniqueBranches.map((branch) => (
+                    <SelectItem key={branch} value={branch}>
+                      {branch === "all" ? "ALL_BRANCHES" : branch}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+            <Button
+              className="bg-transparent border border-[#333333] hover:bg-[#1e1e1e] text-[#EFEFEF]"
+              onClick={() => setShowBranchView(true)}
+            >
+              <GitBranch size={16} className="mr-2" /> BRANCH_VIEW
+            </Button>
+          </div>
+        </div>
+
+        {/* Modifier la section de liste des versions pour ajouter le bouton de suppression */}
+        {/* Dans la section des versions, remplacer la grille des versions par celle-ci: */}
+        <div className="bg-[#0D0D0D] border border-[#333333] rounded-lg overflow-hidden">
+          {/* En-tête du tableau */}
+          <div className="grid grid-cols-12 gap-4 p-4 border-b border-[#333333] text-xs text-[#EFEFEF] uppercase font-bold">
+            <div className="col-span-3">VERSION</div>
+            <div className="col-span-3">BRANCH</div>
+            <div className="col-span-2">AUTHOR</div>
+            <div className="col-span-2">DATE</div>
+            <div className="col-span-2">ACTIONS</div>
           </div>
 
-          <div className="bg-[#0D0D0D] border border-[#333333] rounded-lg overflow-hidden">
-            {/* En-tête du tableau */}
-            <div className="grid grid-cols-12 gap-4 p-4 border-b border-[#333333] text-xs text-[#EFEFEF] uppercase font-bold">
-              <div className="col-span-3">VERSION</div>
-              <div className="col-span-3">BRANCH</div>
-              <div className="col-span-2">AUTHOR</div>
-              <div className="col-span-2">DATE</div>
-              <div className="col-span-2">ACTIONS</div>
-            </div>
-
-            {versions.map((version) => (
+          {filteredVersions.map((version) => (
+            <div
+              key={version.id}
+              className={`grid grid-cols-12 gap-4 p-4 border-b border-[#333333] hover:bg-[#1e1e1e] transition-colors ${
+                selectedVersion === version.id ? "bg-[#1e1e1e]" : ""
+              }`}
+            >
               <div
-                key={version.id}
-                className={`grid grid-cols-12 gap-4 p-4 border-b border-[#333333] hover:bg-[#1e1e1e] transition-colors cursor-pointer ${
-                  selectedVersion === version.id ? "bg-[#1e1e1e]" : ""
-                }`}
+                className="col-span-3 flex items-center gap-2 cursor-pointer"
                 onClick={() => setSelectedVersion(version.id)}
               >
-                <div className="col-span-3 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#FFFFFF]"></div>
-                  <span className="font-medium">{version.name}</span>
-                </div>
-                <div className="col-span-3 flex items-center">
-                  <div className={`border border-[#333333] px-1.5 py-0 text-xs ${getBranchColor(version.branch)}`}>
-                    {version.branch}
-                  </div>
-                </div>
-                <div className="col-span-2 flex items-center text-[#EFEFEF]">{version.author}</div>
-                <div className="col-span-2 flex items-center text-[#EFEFEF]">{version.date}</div>
-                <div className="col-span-2 flex items-center justify-end gap-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full border border-[#333333]">
-                    <Play size={16} />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full border border-[#333333]">
-                    <MessageSquare size={16} />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full border border-[#333333]">
-                    <Share2 size={16} />
-                  </Button>
+                <div className="w-2 h-2 rounded-full bg-[#FFFFFF]"></div>
+                <span className="font-medium relative">
+                  {version.name}
+                  {versionsWithExternalAnnotations.includes(version.id) && (
+                    <span className="absolute -right-2 -top-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                  )}
+                </span>
+              </div>
+              <div className="col-span-3 flex items-center">
+                <div className={`border border-[#333333] px-1.5 py-0 text-xs ${getBranchColor(version.branch)}`}>
+                  {version.branch}
                 </div>
               </div>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="annotations" className="mt-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-medium glow-text-sm">ANNOTATIONS</h2>
-            <div className="flex items-center gap-2">
-              <Button
-                className="bg-transparent border border-[#FFFFFF] hover:bg-[#1e1e1e] text-[#FFFFFF] glow-button"
-                onClick={() => setShowAnnotationFormInternal(!showAnnotationFormInternal)}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                {showAnnotationForm ? "CANCEL" : "ADD_ANNOTATION"}
-              </Button>
-            </div>
-          </div>
-
-          {showAnnotationForm && (
-            <div className="bg-[#0D0D0D] border border-[#333333] rounded-lg p-4 mb-4">
-              <h3 className="text-sm font-medium mb-4">NEW_ANNOTATION</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="time-marker">TIME_MARKER</Label>
-                  <Input
-                    id="time-marker"
-                    placeholder="MM:SS"
-                    value={annotationTimeMarker}
-                    onChange={(e) => setAnnotationTimeMarker(e.target.value)}
-                    className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="annotation-type">TYPE</Label>
-                  <Select value={annotationType} onValueChange={setAnnotationType}>
-                    <SelectTrigger className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                      <SelectItem value="FEEDBACK">FEEDBACK</SelectItem>
-                      <SelectItem value="IDEA">IDEA</SelectItem>
-                      <SelectItem value="FIX">FIX</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2 md:col-span-3">
-                  <Label htmlFor="annotation-content">CONTENT</Label>
-                  <Textarea
-                    id="annotation-content"
-                    placeholder="Enter your annotation"
-                    value={annotationContent}
-                    onChange={(e) => setAnnotationContent(e.target.value)}
-                    className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF] min-h-[80px]"
-                  />
-                </div>
-
-                <div className="md:col-span-3 flex justify-end">
-                  <Button className="bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#EFEFEF]" onClick={handleAddAnnotation}>
-                    ADD_ANNOTATION
-                  </Button>
-                </div>
+              <div className="col-span-2 flex items-center text-[#EFEFEF]">{version.author}</div>
+              <div className="col-span-2 flex items-center text-[#EFEFEF]">{version.date}</div>
+              <div className="col-span-2 flex items-center justify-end gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full border border-[#333333] text-red-500 hover:bg-red-500/10"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    // Ici vous pourriez ajouter une confirmation avant la suppression
+                    console.log(`Deleting version: ${version.id}`)
+                    // Logique de suppression à implémenter
+                  }}
+                >
+                  <Trash2 size={16} />
+                </Button>
               </div>
             </div>
-          )}
-
-          <div className="bg-[#0D0D0D] border border-[#333333] rounded-lg overflow-hidden">
-            {filteredAnnotations.length > 0 ? (
-              filteredAnnotations.map((annotation) => {
-                const statusInfo = getStatusInfo(annotation.status)
-
-                return (
-                  <div
-                    key={annotation.id}
-                    className="flex items-start gap-3 p-3 border-b border-[#333333] hover:bg-[#0a0a0a] transition-colors"
-                  >
-                    <div className="mt-1">
-                      <div className="w-8 h-8 rounded-full border border-[#333333] flex items-center justify-center">
-                        <MessageSquare size={16} />
-                      </div>
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="border border-[#333333] px-1.5 py-0 text-xs">{annotation.timeMarker}</div>
-                        <span className="text-sm font-medium">{annotation.author}</span>
-                        <span className="text-xs text-[#666666]">{annotation.date}</span>
-                      </div>
-
-                      <p className="text-sm mb-2 glow-text-sm">{annotation.content}</p>
-
-                      <div className="flex items-center gap-1 text-xs">
-                        <div className={`w-2 h-2 rounded-full ${statusInfo.bgColor}`}></div>
-                        <span className={statusInfo.color}>{annotation.status}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full">
-                        <Check size={14} />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full">
-                        <X size={14} />
-                      </Button>
-                    </div>
-                  </div>
-                )
-              })
-            ) : (
-              <div className="p-4 text-center text-[#666666]">
-                {selectedVersion ? "NO_ANNOTATIONS_FOR_THIS_VERSION" : "SELECT_A_VERSION_TO_VIEW_ANNOTATIONS"}
-              </div>
-            )}
-          </div>
-        </TabsContent>
-      </Tabs>
+          ))}
+        </div>
+      </div>
 
       {/* Vue arborescente des branches */}
       {showBranchView && (

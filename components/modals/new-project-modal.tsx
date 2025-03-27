@@ -20,16 +20,18 @@ export function NewProjectModal({ onClose, onSave }: NewProjectModalProps) {
   const [description, setDescription] = useState<string>("")
   const [image, setImage] = useState<string | null>(null)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  const [selectedInstruments, setSelectedInstruments] = useState<string[]>([])
   const [projectType, setProjectType] = useState<string>("ALBUM")
   const [commercialStatus, setCommercialStatus] = useState<string>("LIBRE")
   const [purpose, setPurpose] = useState<string>("STREAMING")
+  const [projectProgress, setProjectProgress] = useState<string>("NOT_STARTED")
+  const [selectedInstruments, setSelectedInstruments] = useState<string[]>([])
 
   const availableTags = ["ELECTRONIC", "AMBIENT", "JAZZ", "FUSION", "POP", "VOCAL", "HOUSE", "TECHNO", "EXPERIMENTAL"]
   const availableGenres = ["ELECTRONIC", "AMBIENT", "JAZZ", "FUSION", "POP", "VOCAL", "HOUSE", "TECHNO", "EXPERIMENTAL"]
   const projectTypes = ["ALBUM", "EP", "SINGLE", "REMIX", "BO", "PODCAST", "COMPILATION"]
   const commercialStatuses = ["LIBRE", "EXCLUSIF", "COMMONS", "EN_ATTENTE", "COMMERCIAL", "NON_COMMERCIAL"]
   const purposes = ["LABEL", "STREAMING", "SYNC", "PERSONAL", "DEMO", "LIVE", "EDUCATION"]
+  const progressOptions = ["NOT_STARTED", "IN_PROGRESS", "ALMOST_DONE", "COMPLETED", "ON_HOLD"]
 
   const toggleTag = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -89,11 +91,12 @@ export function NewProjectModal({ onClose, onSave }: NewProjectModalProps) {
         title,
         description,
         genres: selectedGenres,
-        instruments: selectedInstruments,
+        tags: selectedTags,
         image,
         projectType,
         commercialStatus,
         purpose,
+        progress: projectProgress,
       })
     }
     onClose()
@@ -193,6 +196,22 @@ export function NewProjectModal({ onClose, onSave }: NewProjectModalProps) {
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="space-y-2">
+              <Label className="text-[#EFEFEF]">PROJECT_PROGRESS</Label>
+              <Select value={projectProgress} onValueChange={setProjectProgress}>
+                <SelectTrigger className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
+                  <SelectValue placeholder="Select progress" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
+                  {progressOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -239,36 +258,29 @@ export function NewProjectModal({ onClose, onSave }: NewProjectModalProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-[#EFEFEF]">INSTRUMENTS</Label>
+              <Label className="text-[#EFEFEF]">TAGS</Label>
               <Select>
                 <SelectTrigger className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                  <SelectValue placeholder="Select instruments" />
+                  <SelectValue placeholder="Select tags" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0D0D0D] border-[#333333] text-[#EFEFEF]">
-                  <SelectItem value="synth">SYNTH</SelectItem>
-                  <SelectItem value="drums">DRUMS</SelectItem>
-                  <SelectItem value="bass">BASS</SelectItem>
-                  <SelectItem value="guitar">GUITAR</SelectItem>
-                  <SelectItem value="piano">PIANO</SelectItem>
-                  <SelectItem value="vocals">VOCALS</SelectItem>
-                  <SelectItem value="strings">STRINGS</SelectItem>
-                  <SelectItem value="brass">BRASS</SelectItem>
-                  <SelectItem value="woodwinds">WOODWINDS</SelectItem>
-                  <SelectItem value="percussion">PERCUSSION</SelectItem>
-                  <SelectItem value="ambient_textures">AMBIENT_TEXTURES</SelectItem>
+                  {availableTags.map((tag) => (
+                    <SelectItem key={tag} value={tag.toLowerCase()} onClick={() => toggleTag(tag)}>
+                      {tag}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <div className="flex flex-wrap gap-2 mt-2">
-                {selectedInstruments &&
-                  selectedInstruments.map((instrument) => (
-                    <div
-                      key={instrument}
-                      className={`border border-[#333333] px-1.5 py-0 text-xs branch-${instrument.toLowerCase().replace("_", "-")} cursor-pointer`}
-                      onClick={() => toggleInstrument(instrument)}
-                    >
-                      {instrument} <span className="ml-1">×</span>
-                    </div>
-                  ))}
+                {selectedTags.map((tag) => (
+                  <div
+                    key={tag}
+                    className={`border border-[#333333] px-1.5 py-0 text-xs ${getTagColor(tag)} cursor-pointer`}
+                    onClick={() => toggleTag(tag)}
+                  >
+                    {tag} <span className="ml-1">×</span>
+                  </div>
+                ))}
               </div>
             </div>
 

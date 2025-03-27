@@ -76,7 +76,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen bg-background text-foreground overflow-hidden">
+    <div className="flex h-screen bg-[#0D0D0D] text-[#FFFFFF] overflow-hidden">
       <Sidebar onNavigate={handleNavigation} activeView={activeView} />
       <main className="flex-1 overflow-auto">
         <TechnicalFrame>{renderActiveView()}</TechnicalFrame>
